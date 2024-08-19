@@ -12,8 +12,6 @@ class AlunoAuthenticationForm(forms.Form):
         if ra and password:         
             self.user_cache = authenticate(ra=ra, password=password)
             if self.user_cache is None:
-
-                
                 raise forms.ValidationError('RA ou senha inválidos')
             elif not self.user_cache.is_active:
                 raise forms.ValidationError('Esta conta está inativa')
