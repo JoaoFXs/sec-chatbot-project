@@ -7,6 +7,7 @@ class AlunoAuthenticationForm(forms.Form):
 
     def clean(self):
         ra = self.cleaned_data.get('ra')
+        
         password = self.cleaned_data.get('password')
         print(f"Username: {ra}, Password: {password}")
         if ra and password:         
