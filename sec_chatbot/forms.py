@@ -2,13 +2,19 @@ from django import forms
 from django.contrib.auth import authenticate
 
 class AlunoAuthenticationForm(forms.Form):
-    ra = forms.CharField(label='ra')
-    password = forms.CharField(label='Senha', widget=forms.PasswordInput)
+    ra = forms.CharField(label='ra',  widget=forms.TextInput(attrs={
+            'placeholder': 'INSIRA SEU R.A',
+            'class': 'form-control'  # Adicione outras classes CSS se necessário
+        }))
+    password = forms.CharField(label='Senha', widget=forms.PasswordInput(attrs={
+            'placeholder': 'INSIRA SUA SENHA',
+            'class': 'form-control'  # Adicione outras classes CSS se necessário
+        }))
 
     def clean(self):
         ra = self.cleaned_data.get('ra')
         password = self.cleaned_data.get('password')
-        print(f"Username: {ra}, Password: {password}")
+       
         if ra and password:         
             self.user_cache = authenticate(ra=ra, password=password)
             if self.user_cache is None:

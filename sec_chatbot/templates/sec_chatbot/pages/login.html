@@ -5,97 +5,279 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <style>
-        /* static/css/login.css */
+        /* Estilos gerais */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #1E437A; /* Cor de fundo */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
 
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #2c3e50, #3498db); /* Gradiente de fundo azul escuro para claro */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
+        /* Container principal */
+        .container {
+            width: 100%;
+            max-width: 1366px;
+            padding: 2rem;
+            background: #1E437A;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
 
-.login-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-}
+        /* Cabeçalho */
+        .header {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
 
-.login-box {
-    background: #ffffff; /* Caixa branca para contraste */
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    max-width: 400px;
-    width: 100%;
-}
+        /* Estilo do frame */
+        .frame {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
 
-.login-box h1 {
-    margin-bottom: 1.5rem;
-    color: #2c3e50; /* Azul escuro para o texto */
-}
+        .heading1 .impacta {
+            color: white;
+            font-size: 4rem; /* Ajuste o tamanho conforme necessário */
+            font-family: Roboto, sans-serif;
+            font-weight: 700;
+            line-height: 4.5rem; /* Ajuste o line-height conforme necessário */
+        }
 
-.login-box form {
-    display: flex;
-    flex-direction: column;
-}
+        .heading2 .faculdade-de-tecnologia {
+            color: white;
+            font-size: 1.25rem; /* Ajuste o tamanho conforme necessário */
+            font-family: Roboto, sans-serif;
+            font-weight: 400;
+            line-height: 1.75rem; /* Ajuste o line-height conforme necessário */
+        }
 
-.login-box form input {
-    margin-bottom: 1rem;
-    padding: 0.8rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 1rem;
-}
+        /* Formulário */
+        .form-container {
+            width: 100%;
+            max-width: 414px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+        }
 
-.login-box form button {
-    padding: 0.8rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #3498db; /* Azul claro para o botão */
-    color: #fff;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+        /* Botões */
+        .button {
+            width: 100%;
+            max-width: 414px;
+            height: 42px;
+            padding: 4px 24px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0.75;
+            gap: 4px;
+            margin-bottom: 0.5rem;
+        }
 
-.login-box form button:hover {
-    background-color: #2980b9; /* Azul escuro quando o botão é focado */
-}
+        .button.login {
+            background: black;
+            color: white;
+            max-width: 115px;
+            height: 24px;
+            font-size: 0.625rem; /* 10px */
+        }
 
-@media (max-width: 600px) {
-    .login-box {
-        padding: 1rem;
-    }
+        .button-text {
+            font-size: 0.875rem; /* 14px */
+            font-family: Roboto, sans-serif;
+            font-weight: 500;
+            line-height: 1.5rem; /* 22px */
+        }
 
-    .login-box h1 {
-        font-size: 1.5rem;
-    }
+        /* Ajuste para os campos de formulário */
+        .form-control::placeholder {
+            color: black; /* Cor do placeholder */
+            opacity: 0.75; /* Controle da opacidade */
+            
+            text-align: center; /* Alinhamento central */
+        }
+        .form-group {
+            width: 100%;
+            background: #E4EDFB;
+            display: flex;
+            flex-direction: column;
+            border-radius: 8px;
+            align-items: flex-start;
+        }
 
-    .login-box form input, .login-box form button {
-        font-size: 0.9rem;
-    }
-}
+        
 
+        .form-group label {
+            color: white;
+            font-size: 0.875rem;
+            border-radius: 8px;
+            border: 1px solid white;
+            background: #E4EDFB;
+            margin-bottom: 0.25rem;
+        }
+        
+        .form-group input {
+            width: 100%;
+            max-width: 414px;
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid white;
+            background: #E4EDFB;
+            text-align: center;
+            color: black;
+            font-size: 0.875rem;
+            outline: none;
+        }
+        .form-group input:hover {
+            transform: scale(1.01); /* Aumenta ligeiramente o tamanho do input */
+            background-color: #C5D8F6;
+            
+        }
+        /* Responsividade */
+        @media (max-width: 1024px) {
+            .heading1 .impacta {
+                font-size: 3rem;
+                line-height: 3.5rem;
+            }
+
+            .heading2 .faculdade-de-tecnologia {
+                font-size: 1rem;
+                line-height: 1.5rem;
+            }
+
+            .button {
+                padding: 4px 16px;
+            }
+
+            .button.login {
+                font-size: 0.625rem; /* 10px */
+            }
+
+            .button-text {
+                font-size: 0.75rem;
+            }
+
+            .form-group input {
+                font-size: 0.75rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .heading1 .impacta {
+                font-size: 2rem;
+                line-height: 2.5rem;
+            }
+
+            .heading2 .faculdade-de-tecnologia {
+                font-size: 0.875rem;
+                line-height: 1.25rem;
+            }
+
+            .button {
+                width: 100%;
+                max-width: none;
+                padding: 4px 12px;
+            }
+
+            .button.login {
+                font-size: 0.5rem; /* 8px */
+            }
+
+            .button-text {
+                font-size: 0.625rem;
+            }
+
+            .form-group input {
+                font-size: 0.625rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .heading1 .impacta {
+                font-size: 1.5rem;
+                line-height: 2rem;
+            }
+
+            .heading2 .faculdade-de-tecnologia {
+                font-size: 0.75rem;
+                line-height: 1rem;
+            }
+
+            .button {
+                padding: 4px 8px;
+            }
+
+            .button.login {
+                font-size: 0.5rem; /* 8px */
+            }
+
+            .button-text {
+                font-size: 0.5rem;
+            }
+
+            .form-group input {
+                font-size: 0.5rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="login-container">
-        <div class="login-box">
-            <h1>Login</h1>
-            <form method="post">
-                {% csrf_token %}
+    <div class="container">
+        <div class="header">
+            <div class="frame">
+                <div class="heading1">
+                    <div class="impacta">IMPACTA</div>
+                </div>
+                <div class="heading2">
+                    <div class="faculdade-de-tecnologia">FACULDADE DE TECNOLOGIA</div>
+                </div>
+            </div>
+        </div>
+        
+        <form method="post" class="form-container">
+            {% csrf_token %}
+            {{ form.non_field_errors }}
+
+            <div class="form-group">
+                {{ form.ra }}
+                {{ form.ra.errors }}
+            </div>
+
+            <div class="form-group">
+                {{ form.password }}
+                {{ form.password.errors }}
+            </div>
+
+            <div class="button login">
+               
+                <div class="button-text"> <button type="submit" style="background: black; color: white;">LOGIN</button></div>
+            </div>
+        </form>
+    </div>
+</body>
+</html>
+
+
+<!--
+  {% csrf_token %}
                 {{ form.non_field_errors }}
                 {{ form.ra.label_tag }} {{ form.ra }}
                 {{ form.ra.errors }}
                 {{ form.password.label_tag }} {{ form.password }}
                 {{ form.password.errors }}
-                <button type="submit">Entrar</button>
-            </form>
-        </div>
-    </div>
-</body>
-</html>
+-->
