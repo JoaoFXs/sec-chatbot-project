@@ -69,6 +69,26 @@
         }
 
         /* Botões */
+        button, input[type="submit"], input[type="reset"] {
+            background: none;
+            color: inherit;
+            border: none;
+            padding: 0;
+            font: inherit;
+            cursor: pointer;
+            outline: inherit;
+            width: 100%;
+            padding: 0px 53.5px;
+        }
+
+        button:hover, input[type="submit"]:hover, input[type="reset"]:hover {
+            opacity: 0.8; /* Diminui levemente a opacidade ao passar o mouse */
+            background: white;
+        }
+        /* Efeito click */
+        button:active, input[type="submit"]:active, input[type="reset"]:active {
+            transform: scale(0.95); /* Reduz o tamanho do botão para 95% quando clicado */
+        }
         .button {
             width: 100%;
             max-width: 414px;
@@ -84,7 +104,9 @@
             gap: 4px;
             margin-bottom: 0.5rem;
         }
-
+        .button:active {
+            transform: scale(0.95); /* Reduz o tamanho do botão para 95% quando clicado */
+        }
         .button.login {
             background: black;
             color: white;
@@ -99,6 +121,7 @@
             font-weight: 500;
             line-height: 1.5rem; /* 22px */
         }
+        
 
         /* Ajuste para os campos de formulário */
         .form-control::placeholder {
