@@ -29,6 +29,10 @@ class Aluno(AbstractBaseUser, PermissionsMixin):
     nome = models.CharField(max_length=100)
     horas_complementares = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     username = models.CharField(max_length=30, unique=True)
+    curso = models.CharField(max_length=50)
+    turma = models.CharField(max_length=3)
+    situacao_matricula = models.CharField(max_length=30)
+    semestre = models.DecimalField(max_digits=2, decimal_places=0, default=0)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)  # Necessário para superusuário
     is_superuser = models.BooleanField(default=False)  # Necessário para superusuário
