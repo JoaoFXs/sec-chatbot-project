@@ -15,6 +15,7 @@ import os
 from .models import Aluno
 # Create your views here.
 from .forms import AlunoAuthenticationForm
+from django.http import JsonResponse
 
 def user_login(request):
     if request.method == 'POST':
@@ -95,6 +96,6 @@ def train(request):
         model.fit(x, y, epochs=200, batch_size=5, verbose=1)
         model.save('model.h5')
 
-        return render(request, 'sec_chatbot/pages/train_success.html')
+        return JsonResponse({'status': 'success'})
 
     return render(request, 'sec_chatbot/pages/train_chatbot.html')
