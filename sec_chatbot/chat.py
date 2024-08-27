@@ -8,15 +8,30 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import os
-
+from .models import Aluno
 # Carregue seu modelo e dados
+
 model = load_model('model.h5')
 
 # Defina palavras e classes
-words = [...]  # Liste suas palavras aqui
-classes = [...]  # Liste suas classes aqui
-
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+intents_path = os.path.join(base_dir, 'sec_chatbot', 'templates', 'sec_chatbot', 'json', 'intents.json')
+ignore_words = ["!", "@", "#", "$", "%", "*", "?"]
 lemmatizer = WordNetLemmatizer()
+
+with open(intents_path) as file:
+    intents = json.load(file)
+    words = []
+    classes = []
+    for intent in intents['intents']:
+        for pattern in intent['patterns']:
+            word_list = nltk.word_tokenize(pattern)
+            words.extend(word_list)
+        classes.append(intent['tag'])
+
+    words = [lemmatizer.lemmatize(w.lower()) for w in words if w not in ignore_words]
+    words = sorted(set(words))
+    classes = sorted(set(classes))
 
 def clean_up_sentence(sentence):
     sentence_words = nltk.word_tokenize(sentence)
@@ -25,16 +40,19 @@ def clean_up_sentence(sentence):
 
 def bag_of_words(sentence, words):
     sentence_words = clean_up_sentence(sentence)
-    bag = [0]*len(words)
+    bag = [0]*len(words)  
     for s in sentence_words:
         for i, w in enumerate(words):
-            if w == s:
+            if w == s: 
                 bag[i] = 1
     return np.array(bag)
 
+
 def predict_class(sentence, model):
     bow = bag_of_words(sentence, words)
+   
     res = model.predict(np.array([bow]))[0]
+   
     ERROR_THRESHOLD = 0.25
     results = [[i, r] for i, r in enumerate(res) if r > ERROR_THRESHOLD]
     results.sort(key=lambda x: x[1], reverse=True)
@@ -45,6 +63,7 @@ def predict_class(sentence, model):
 
 def get_response(intents_list, intents_json):
     tag = intents_list[0]['intent']
+    
     if isinstance(intents_json, list):
         list_of_intents = [i for i in intents_json]
     else:
@@ -56,16 +75,26 @@ def get_response(intents_list, intents_json):
 
 @csrf_exempt
 def chat(request):
+    try:
+        aluno = Aluno.objects.get(ra=request.user.ra)
+    except Aluno.DoesNotExist:
+        aluno = None
     if request.method == "POST":
-        data = json.loads(request.body)
-        message = data.get('message')
-        if message:
-            with open('path/to/intents.json') as file:
-                intents = json.load(file)
-            ints = predict_class(message, model)
-            res = get_response(ints, intents)
-            return JsonResponse({"response": res})
-    return JsonResponse({"error": "Invalid request"}, status=400)
+        try:
+            data = json.loads(request.body)
+            message = data.get('message')
+           
+            if message:
+                base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                intents_path = os.path.join(base_dir, 'sec_chatbot', 'templates', 'sec_chatbot', 'json', 'intents.json')
+                intents = json.loads(open(intents_path).read())
+                ints = predict_class(message, model)
+                res = get_response(ints, intents)
+                if "{{ aluno.ra }}" in res: ##Assim que será feito para valores dinamicos
+                    res = res.replace("{{ aluno.ra }}", aluno.ra)
+                return JsonResponse({"response": res})
+            return JsonResponse({"error": "Mensagem não encontrada"}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": "Erro ao processar a mensagem"}, status=500)
+    return JsonResponse({"error": "Método não permitido"}, status=405)
 
-def home(request):
-    return render(request, 'chat.html')  # Substitua 'chat.html' pelo nome correto do seu template HTML

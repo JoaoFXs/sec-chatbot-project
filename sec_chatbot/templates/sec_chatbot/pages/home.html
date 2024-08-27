@@ -147,21 +147,83 @@
                 <p>Situação da Matrícula: {{ aluno.situacao_matricula }}</p>
             </div>
         </div>
-        <div class="chat-body">
+        <div class="chat-body" id="chat-body">
             <div class="chat-message bot">
                 Olá! Como posso ajudar você hoje?
             </div>
-            <div class="chat-message user">
-                Qual é o status da minha matrícula?
-            </div>
-            <div class="chat-message bot">
-                Sua matrícula está regular.
-            </div>
         </div>
         <div class="chat-footer">
-            <input type="text" placeholder="Digite sua mensagem...">
-            <button>Enviar</button>
+            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+            <input type="text" id="messageInput" placeholder="Digite sua mensagem...">
+            <button id="sendButton">Enviar</button>
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM fully loaded and parsed');
+    
+            const sendButton = document.getElementById('sendButton');
+            const messageInput = document.getElementById('messageInput');
+            const chatBody = document.getElementById('chat-body');
+    
+            console.log('sendButton:', sendButton);
+            console.log('messageInput:', messageInput);
+            console.log('chatBody:', chatBody);
+    
+            if (!messageInput) {
+                console.error('Element with ID messageInput not found.');
+                return;
+            }
+    
+            if (!sendButton) {
+                console.error('Element with ID sendButton not found.');
+                return;
+            }
+    
+            sendButton.addEventListener('click', () => {
+                const message = messageInput ? messageInput.value.trim() : '';
+                console.log('Message Input:', message); // Log do input
+                if (message) {
+                    // Adicione a mensagem do usuário ao chat
+                    const userMessage = document.createElement('div');
+                    userMessage.classList.add('chat-message', 'user');
+                    userMessage.textContent = message;
+                    chatBody.appendChild(userMessage);
+                    console.log('Message Input:', message);
+                    // Limpe o input
+                    messageInput.value = '';
+    
+                    // Envie a mensagem para o servidor
+                    fetch('{% url "chat" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        },
+                        body: JSON.stringify({ 'message': message })
+                    })
+                    .then(response => {
+                        console.log('Status da resposta:', response.status);
+                        return response.json();
+                    })
+                    .then(data => {
+                        console.log('Resposta do servidor:', data);
+                        const botResponse = data.response || 'Desculpe, não entendi o que você disse.';
+                        // Adicione a resposta do bot ao chat
+                        const botMessage = document.createElement('div');
+                        botMessage.classList.add('chat-message', 'bot');
+                        console.log('Resposta do servidor:', botResponse);
+                        botMessage.textContent = botResponse;
+                        chatBody.appendChild(botMessage);
+                        chatBody.scrollTop = chatBody.scrollHeight; // Rola para a parte inferior do chat
+                    })
+                    .catch(error => {
+                        console.error('Erro na requisição:', error);
+                    });
+                }
+            });
+        });
+    </script>
+    
 </body>
 </html>
