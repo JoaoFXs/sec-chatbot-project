@@ -87,3 +87,43 @@ def home(request):
     Returns:
         HttpResponse: Renderiza a página inicial com as informações do aluno.
   
+
+  ## Funcionalidades de Autenticação e Sessão
+
+Este projeto inclui um conjunto de funções para gerenciar autenticação e sessões de usuários em um aplicativo Django.
+
+### Principais Funções
+
+- **Autenticação**:
+  - `authenticate(request=None, **credentials)`: Autentica um usuário com as credenciais fornecidas.
+  - `aauthenticate(request=None, **credentials)`: Versão assíncrona de `authenticate`.
+
+- **Gerenciamento de Sessão**:
+  - `login(request, user, backend=None)`: Realiza o login de um usuário e persiste a sessão.
+  - `alogin(request, user, backend=None)`: Versão assíncrona de `login`.
+  - `logout(request)`: Realiza o logout de um usuário e limpa a sessão.
+  - `alogout(request)`: Versão assíncrona de `logout`.
+
+- **Utilitários de Usuário**:
+  - `get_user_model()`: Retorna o modelo de usuário ativo no projeto.
+  - `get_user(request)`: Retorna a instância do usuário associada à sessão da requisição.
+  - `aget_user(request)`: Versão assíncrona de `get_user`.
+
+- **Outras Funções**:
+  - `get_permission_codename(action, opts)`: Retorna o codinome da permissão para uma ação específica.
+  - `update_session_auth_hash(request, user)`: Atualiza o hash de autenticação da sessão após uma mudança de senha.
+  - `aupdate_session_auth_hash(request, user)`: Versão assíncrona de `update_session_auth_hash`.
+
+### Exemplo de Uso
+
+Para autenticar um usuário:
+```python
+from myapp.auth import authenticate
+
+user = authenticate(request, username='john', password='secret')
+if user is not None:
+    # Credenciais válidas
+    login(request, user)
+else:
+    # Credenciais inválidas
+    pass

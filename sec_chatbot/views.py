@@ -6,7 +6,7 @@ from .models import Aluno
 # Create your views here.
 from .forms import AlunoAuthenticationForm
 
-def user_login(request):
+def user_llogin(request):
     if request.method == 'POST':
         ##form = AlunoAuthenticationForm(request, data=request.POST)
         form = AlunoAuthenticationForm(request.POST)
