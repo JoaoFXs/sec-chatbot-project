@@ -65,7 +65,7 @@ http://127.0.0.1:8000/
 
 def user_login(request):
 
-    """
+    
     View para realizar o login do usuário.
 
     Args:
@@ -74,11 +74,11 @@ def user_login(request):
     Returns:
         HttpResponse: Redireciona para a página inicial se o login for bem-sucedido,
                       caso contrário, renderiza a página de login com o formulário.
-    """
+   
 
 def home(request):
 
-    """
+ 
     View para renderizar a página inicial do usuário logado.
 
     Args:
@@ -86,4 +86,4 @@ def home(request):
 
     Returns:
         HttpResponse: Renderiza a página inicial com as informações do aluno.
-    """
+  
