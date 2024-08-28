@@ -212,7 +212,7 @@
                         // Adicione a resposta do bot ao chat
                         const botMessage = document.createElement('div');
                         botMessage.classList.add('chat-message', 'bot');
-                        console.log('Resposta do servidor:', botResponse);
+                        console.log('Resposta do servidor:', data);
                         botMessage.textContent = botResponse;
                         chatBody.appendChild(botMessage);
                         chatBody.scrollTop = chatBody.scrollHeight; // Rola para a parte inferior do chat
