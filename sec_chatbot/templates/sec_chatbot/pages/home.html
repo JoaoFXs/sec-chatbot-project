@@ -197,7 +197,7 @@
                     fetch('{% url "chat" %}', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
+                            'Content-Type': 'application/json;charset=UTF-8',
                             'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
                         },
                         body: JSON.stringify({ 'message': message })
