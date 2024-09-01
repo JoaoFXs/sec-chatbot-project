@@ -1,6 +1,22 @@
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from django.db import models
 
+
+class Curso(models.Model):
+    id_curso = models.AutoField(primary_key=True)
+    nome_curso = models.CharField(max_length=100, unique=True)
+
+    def __str__(self):
+        return self.nome_curso
+
+class Turma(models.Model):
+    sigla_turma = models.CharField(max_length=10, unique=True)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.sigla_turma
+    
+
 class AlunoManager(BaseUserManager):
     def create_user(self, ra, nome, password=None, **extra_fields):
         if not ra:
@@ -44,3 +60,42 @@ class Aluno(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.nome
+
+class Professor(models.Model):
+    rp = models.CharField(max_length=20, unique=True)
+    nome = models.CharField(max_length=100)
+    formacao = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.nome
+
+class Materia(models.Model):
+    id_materia = models.AutoField(primary_key=True)
+    nome_materia = models.CharField(max_length=100, unique=True)
+    ementa_materia = models.TextField()
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    
+    def __str__(self):
+        return self.nome_materia
+
+class Nota(models.Model):
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
+    trabalho_um = models.DecimalField(max_digits=5, decimal_places=2)
+    trabalho_dois = models.DecimalField(max_digits=5, decimal_places=2)
+    prova = models.DecimalField(max_digits=5, decimal_places=2)
+    media = models.DecimalField(max_digits=5, decimal_places=2)
+
+    def __str__(self):
+        return f'{self.aluno.nome} - {self.materia.nome_materia}'
+
+class HorarioAula(models.Model):
+    turma = models.ForeignKey(Turma, on_delete=models.CASCADE)
+    materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
+    horario = models.CharField(max_length=20)
+
+    def __str__(self):
+        return f'{self.turma.sigla_turma} - {self.materia.nome_materia} - {self.horario}'
