@@ -91,12 +91,17 @@ def chat(request):
                     professor_name = message.strip().title()
                     try:
                         professor = Professor.objects.get(nome=professor_name)
+                        cursos = ', '.join([curso.nome_curso for curso in professor.cursos.all()])
+                        turmas = ', '.join([turma.sigla_turma for turma in professor.turmas.all()])
+                        materias = ', '.join([materia.nome_materia for materia in professor.materia_lecionada.all()])
                         # Formate a resposta com os dados do professor
                         res = (
                             f" - Nome do Professor: {professor.nome}\n"
-                            f" - Curso Lecionado: {professor.curso.nome_curso}\n"
+                            f" - Curso Lecionado: {cursos}\n"
+                            f" - Turmas: {turmas}\n"
+                            f" - Materias Lecionadas:  {materias}\n"
                             f" - Formação:  {professor.formacao}\n"
-                            f" - Email para contato:  {professor.email}"
+                            f" - Email para contato:  {professor.email}"                            
                         )
                     except Professor.DoesNotExist:
                         res = "Professor não encontrado. Por favor, verifique o nome e tente novamente."
@@ -109,7 +114,6 @@ def chat(request):
                 else:
                     # Processamento normal da mensagem
                     ints = predict_class(message, model)
-                    print(ints)
                     res = get_response(ints, intents)
                     if "{{ aluno.ra }}" in res and aluno:
                         res = res.replace("{{ aluno.ra }}", aluno.ra)

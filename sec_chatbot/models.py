@@ -61,15 +61,6 @@ class Aluno(AbstractBaseUser, PermissionsMixin):
     def __str__(self):
         return self.nome
 
-class Professor(models.Model):
-    rp = models.CharField(max_length=20, unique=True)
-    nome = models.CharField(max_length=100)
-    formacao = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-
-    def __str__(self):
-        return self.nome
 
 class Materia(models.Model):
     id_materia = models.AutoField(primary_key=True)
@@ -79,6 +70,17 @@ class Materia(models.Model):
     
     def __str__(self):
         return self.nome_materia
+
+class Professor(models.Model):
+    rp = models.CharField(max_length=20, unique=True)
+    nome = models.CharField(max_length=100)
+    formacao = models.CharField(max_length=100)
+    email = models.EmailField(unique=True)
+    cursos = models.ManyToManyField(Curso, related_name='professores')
+    turmas = models.ManyToManyField(Turma, related_name='professores')
+    materia_lecionada = models.ManyToManyField(Materia, related_name='professores')
+    def __str__(self):
+        return self.nome
 
 class Nota(models.Model):
     aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE)
