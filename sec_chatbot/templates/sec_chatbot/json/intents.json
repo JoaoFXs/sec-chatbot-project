@@ -27,19 +27,13 @@
       {
     "tag": "querer",
     "patterns": ["ra", "qual meu ra?"],
-    "responses": ["seu ra e: {{ aluno.ra }}", "Seu numero de matricula ra e: {{ aluno.ra }}"],
+    "responses": ["seu ra e: {{ aluno.ra }}", "Seu numero de matricula ra é: {{ aluno.ra }}"],
     "context": ["basic"]
   },
   {
-    "tag": "consulta_professores",
+    "tag": "informacoes_professor",
     "patterns": ["professores", "Quero informacoes sobre professores"],
     "responses": ["Por favor, digite o nome do professor da seguinte forma: "],
-    "context": ["professores"]
-  },
-  {
-    "tag": "informacao_professores",
-    "patterns": ["professores"],
-    "responses": ["Esse professor é excelente"],
     "context": ["professores"]
   },
   {

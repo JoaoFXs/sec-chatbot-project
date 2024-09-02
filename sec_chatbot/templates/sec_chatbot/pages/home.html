@@ -208,12 +208,13 @@
                     })
                     .then(data => {
                         console.log('Resposta do servidor:', data);
-                        const botResponse = data.response || 'Desculpe, não entendi o que você disse.';
+                        const botResponse = data.response.replace(/\n/g, '<br>') || 'Desculpe, não entendi o que você disse.';
                         // Adicione a resposta do bot ao chat
+                        //botResponse = botResponse.replace(/\n/g, '<br>');
                         const botMessage = document.createElement('div');
                         botMessage.classList.add('chat-message', 'bot');
                         console.log('Resposta do servidor:', data);
-                        botMessage.textContent = botResponse;
+                        botMessage.innerHTML = botResponse;
                         chatBody.appendChild(botMessage);
                         chatBody.scrollTop = chatBody.scrollHeight; // Rola para a parte inferior do chat
                     })

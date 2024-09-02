@@ -47,7 +47,8 @@ def train(request):
         lemmatizer = WordNetLemmatizer()
         words = []
         documents = []
-        intents = json.loads(open(intents_path).read())
+        with open(intents_path, 'r', encoding='utf-8') as file:
+            intents = json.load(file)
         classes = [i['tag'] for i in intents['intents']]
         ignore_words = ["!", "@", "#", "$", "%", "*", "?"]
 
