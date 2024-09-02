@@ -88,7 +88,7 @@ def chat(request):
             if message:
                 # Verifica se o chatbot está aguardando o nome de um professor
                 if request.session.get('awaiting_professor_name'):
-                    professor_name = message.strip()
+                    professor_name = message.strip().title()
                     try:
                         professor = Professor.objects.get(nome=professor_name)
                         # Formate a resposta com os dados do professor
