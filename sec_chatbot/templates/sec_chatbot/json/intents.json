@@ -3,7 +3,7 @@
   {
     "tag": "welcome",
     "patterns": ["Oi", "Olá", "Bom dia", "Boa tarde", "Boa noite", "Hello", "Hi", "Hey", "Como vai?", "Tudo bem?", "Saudações", "E aí", "Como posso ajudar?", "Olá, assistente", "Oi, assistente", "Bom dia, assistente", "Boa tarde, assistente", "Boa noite, assistente"],
-    "responses": ["Olá! Eu sou sua assistente virtual. Como posso ajudar você hoje?", "Oi! Estou aqui para ajudar. O que você precisa?", "Olá! Em que posso te ajudar hoje?", "Bom dia! Como posso assisti-lo hoje?", "Boa tarde! O que você gostaria de saber?", "Boa noite! Como posso ajudar você hoje?", "Olá! Sou a assistente virtual. O que você gostaria de fazer?", "Oi! Estou à disposição para ajudar com qualquer coisa que você precisar.", "Saudações! Estou aqui para responder suas perguntas. Como posso ajudar?", "E aí! O que você precisa de ajuda hoje?", "Como vai? Posso te ajudar com alguma coisa?", "Tudo bem? O que posso fazer por você?", "Olá, assistente virtual aqui. Como posso ser útil?"],
+    "responses": ["Olá! Eu sou sua assistente virtual. Como posso ajudar você hoje?", "Oi! Estou aqui para ajudar. O que você precisa?", "Olá! Em que posso te ajudar hoje?", "Olá! Sou a assistente virtual. O que você gostaria de fazer?", "Oi! Estou à disposição para ajudar com qualquer coisa que você precisar.", "Saudações! Estou aqui para responder suas perguntas. Como posso ajudar?", "E aí! O que você precisa de ajuda hoje?", "Como vai? Posso te ajudar com alguma coisa?", "Tudo bem? O que posso fazer por você?", "Olá, assistente virtual aqui. Como posso ser útil?"],
     "context": ["starting"]
   },
   {
