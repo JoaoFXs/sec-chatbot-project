@@ -29,12 +29,21 @@
         .chat-header {
             display: flex;
             align-items: center;
+            justify-content: space-between;
             padding: 16px;
             background-color: rgba(42, 85, 149, 1);
             color: #ffffff;
         }
 
+        .chat-header .avatar-dropdown {
+            position: relative;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
         .chat-header .avatar {
+            margin-left: 16px;
             border-radius: 50%;
             background-color: #ffffff;
             color: #007BFF;
@@ -44,22 +53,38 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-right: 16px;
-     
         }
 
-        .chat-header .header-info {
-            flex-grow: 1;            
+        .chat-header .dropdown-icon {
+            margin-left: 8px;
+            font-size: 18px;
         }
 
-        .chat-header .header-info h1 {
-            margin: 0;
-            font-size: 20px;
+        .chat-header .dropdown-content {
+            display: none;
+            position: absolute;
+            top: 60px; /* Abaixo do avatar */
+            right: 0;
+            background-color: #ffffff;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            border-radius: 8px;
+            padding: 12px;
+            text-align: left;
         }
 
-        .chat-header .header-info p {
-            margin: 2px 0;
+        .chat-header .avatar-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .chat-header .dropdown-content p {
+            margin: 8px 0;
+            color: #000000;
             font-size: 14px;
+        }
+        .chat-header .header-info img {
+           width: 50%;
         }
 
         .chat-body {
@@ -79,18 +104,17 @@
         .chat-message.user {
             background-color: rgba(42, 85, 149, 1);
             color: #ffffff;
-            align-self: flex-end; /* Alinhar ao lado direito */
-            margin-left: auto; /* Adicionar margem automática à esquerda */
-            margin-right: 0; /* Remover margem à direita */
+            align-self: flex-end;
+            margin-left: auto;
+            margin-right: 0;
         }
 
         .chat-message.bot {
             background-color: #eeeeee;
             color: #000000;
-            align-self: flex-start; /* Alinhar ao lado esquerdo */
-            margin-left: 0; /* Remover margem à esquerda */
-            margin-right: auto; /* Adicionar margem automática à direita */
-            
+            align-self: flex-start;
+            margin-left: 0;
+            margin-right: auto;
         }
 
         .chat-footer {
@@ -141,16 +165,22 @@
 <body>
     <div class="chat-container">
         <div class="chat-header">
-            <div class="avatar">
-                <i class="fas fa-user"></i>
-            </div>
             <div class="header-info">
-                <h1>{{ aluno.nome }}</h1>
-                <p>RA: {{ aluno.ra }}</p>
-                <p>Curso: {{ aluno.curso }}</p>
-                <p>Turma: {{ aluno.turma }}</p>
-                <p>Semestre Atual: {{ aluno.semestre }}</p>
-                <p>Situação da Matrícula: {{ aluno.situacao_matricula }}</p>
+                <img src="https://files.engaged.com.br/5c192cdf667332429960563e/account/5c192cdf667332429960563e/rZRopHkjRdKrUwB0Ajri_logo-alta-impacta_optimized.png" alt="Logo Impacta">
+            </div>
+            <div class="avatar-dropdown">
+                <div class="avatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <i class="fas fa-caret-down dropdown-icon"></i>
+                <div class="dropdown-content">
+                    <p>{{ aluno.nome }}</p>
+                    <p>RA: {{ aluno.ra }}</p>
+                    <p>Curso: {{ aluno.curso }}</p>
+                    <p>Turma: {{ aluno.turma }}</p>
+                    <p>Semestre Atual: {{ aluno.semestre }}</p>
+                    <p>Situação da Matrícula: {{ aluno.situacao_matricula }}</p>
+                </div>
             </div>
         </div>
         <div class="chat-body" id="chat-body">
@@ -164,41 +194,32 @@
             <button id="sendButton">Enviar</button>
         </div>
     </div>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             console.log('DOM fully loaded and parsed');
-    
+
             const sendButton = document.getElementById('sendButton');
             const messageInput = document.getElementById('messageInput');
             const chatBody = document.getElementById('chat-body');
-    
-            console.log('sendButton:', sendButton);
-            console.log('messageInput:', messageInput);
-            console.log('chatBody:', chatBody);
-    
-            if (!messageInput) {
-                console.error('Element with ID messageInput not found.');
+
+            if (!messageInput || !sendButton) {
+                console.error('Elements not found.');
                 return;
             }
-    
-            if (!sendButton) {
-                console.error('Element with ID sendButton not found.');
-                return;
-            }
-    
+
             sendButton.addEventListener('click', () => {
-                const message = messageInput ? messageInput.value.trim() : '';
-                console.log('Message Input:', message); // Log do input
+                const message = messageInput.value.trim();
                 if (message) {
                     // Adicione a mensagem do usuário ao chat
                     const userMessage = document.createElement('div');
                     userMessage.classList.add('chat-message', 'user');
                     userMessage.textContent = message;
                     chatBody.appendChild(userMessage);
-                    console.log('Message Input:', message);
+
                     // Limpe o input
                     messageInput.value = '';
-    
+
                     // Envie a mensagem para o servidor
                     fetch('{% url "chat" %}', {
                         method: 'POST',
@@ -208,18 +229,11 @@
                         },
                         body: JSON.stringify({ 'message': message })
                     })
-                    .then(response => {
-                        console.log('Status da resposta:', response.status);
-                        return response.json();
-                    })
+                    .then(response => response.json())
                     .then(data => {
-                        console.log('Resposta do servidor:', data);
                         const botResponse = data.response.replace(/\n/g, '<br>') || 'Desculpe, não entendi o que você disse.';
-                        // Adicione a resposta do bot ao chat
-                        //botResponse = botResponse.replace(/\n/g, '<br>');
                         const botMessage = document.createElement('div');
                         botMessage.classList.add('chat-message', 'bot');
-                        console.log('Resposta do servidor:', data);
                         botMessage.innerHTML = botResponse;
                         chatBody.appendChild(botMessage);
                         chatBody.scrollTop = chatBody.scrollHeight; // Rola para a parte inferior do chat
@@ -231,6 +245,5 @@
             });
         });
     </script>
-    
 </body>
 </html>
