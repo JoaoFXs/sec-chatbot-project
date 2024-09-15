@@ -45,8 +45,8 @@ class Aluno(AbstractBaseUser, PermissionsMixin):
     nome = models.CharField(max_length=100)
     horas_complementares = models.DecimalField(max_digits=5, decimal_places=2, default=0)
     username = models.CharField(max_length=30, unique=True)
-    curso = models.CharField(max_length=50)
-    turma = models.CharField(max_length=3)
+    curso = models.ForeignKey(Curso, on_delete=models.CASCADE, null=True, blank=True)  # Permitir nulo temporariamente
+    turma = models.ForeignKey(Turma, on_delete=models.CASCADE, null=True, blank=True)  # Permitir nulo temporariamente
     situacao_matricula = models.CharField(max_length=30)
     semestre = models.DecimalField(max_digits=2, decimal_places=0, default=0)
     is_active = models.BooleanField(default=True)
@@ -67,7 +67,8 @@ class Materia(models.Model):
     nome_materia = models.CharField(max_length=100, unique=True)
     ementa_materia = models.TextField()
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE)
-    
+    turmas = models.ManyToManyField(Turma, related_name='materias')  # Alteração para ManyToMany
+
     def __str__(self):
         return self.nome_materia
 
@@ -97,7 +98,8 @@ class Nota(models.Model):
 class HorarioAula(models.Model):
     turma = models.ForeignKey(Turma, on_delete=models.CASCADE)
     materia = models.ForeignKey(Materia, on_delete=models.CASCADE)
-    horario = models.CharField(max_length=20)
+    horario_inicio = models.TimeField()
+    horario_fim = models.TimeField()
 
     def __str__(self):
-        return f'{self.turma.sigla_turma} - {self.materia.nome_materia} - {self.horario}'
+        return f'{self.turma.sigla_turma} - {self.materia.nome_materia} - {self.horario_inicio.strftime("%H:%M")} a {self.horario_fim.strftime("%H:%M")}'

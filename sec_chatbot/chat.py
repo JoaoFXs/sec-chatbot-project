@@ -8,7 +8,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 import os
-from .models import Aluno, Professor  # Importação atualizada
+from .models import Aluno, Professor, Materia, HorarioAula
+
 
 # Carregue seu modelo e dados
 model = load_model('model.h5')
@@ -111,6 +112,42 @@ def chat(request):
                     request.session.modified = True
                     
                     return JsonResponse({"response": res})
+                # Verifica se o chatbot está aguardando a matéria
+                elif request.session.get('awaiting_materia'):
+                    materia_name = message.strip().title()
+                    request.session['materia'] = materia_name
+                    request.session['awaiting_turma'] = True
+                    request.session.modified = True
+                    return JsonResponse({"response": "Por favor, informe a turma da matéria."})
+                # Verifica se o chatbot está aguardando a Turma
+                elif request.session.get('awaiting_materia_selection'):
+                    selected_materia = message.strip().title()
+                    materias_disponiveis = request.session.get('materias_disponiveis', [])
+
+                    if selected_materia in materias_disponiveis:
+                        try:
+                            # Busca o horário da aula para a matéria selecionada e a turma do aluno
+                            horario = HorarioAula.objects.filter(turma=aluno.turma, materia__nome_materia=selected_materia).first()
+
+                            if horario:
+                                res = (
+                                    f"A aula de {selected_materia} para a turma {aluno.turma} "
+                                    f"Ocorre às {horario.horario_inicio} -{horario.horario_fim} "
+                                )
+                            else:
+                                res = "Não encontrei o horário dessa aula. Verifique os dados e tente novamente."
+                        except Materia.DoesNotExist:
+                            res = "Matéria não encontrada. Verifique os dados e tente novamente."
+                    else:
+                        res = "Matéria selecionada inválida. Por favor, escolha uma das opções fornecidas."
+
+                    # Limpa o estado da sessão após a seleção da matéria
+                    del request.session['materias_disponiveis']
+                    del request.session['awaiting_materia_selection']
+                    request.session.modified = True
+                    
+                    return JsonResponse({"response": res})
+                
                 else:
                     # Processamento normal da mensagem
                     ints = predict_class(message, model)
@@ -125,7 +162,27 @@ def chat(request):
                         request.session.modified = True
                         # Resposta para solicitar o nome do professor
                         res = "Por favor, informe o nome do professor que deseja obter informações."
-                    
+
+                    # Verifica se a intent é 'horario_aula'
+                    if ints and ints[0]['intent'] == 'horario_aula':
+                        # Obtém todas as matérias associadas à turma do aluno
+                        materias = Materia.objects.filter(turmas=aluno.turma)
+                        if materias.exists():
+                            # Cria uma lista de matérias disponíveis
+                            materias_list = [materia.nome_materia for materia in materias]
+                            materias_str = ', '.join(materias_list)
+                            # Armazena as matérias disponíveis na sessão para futura seleção
+                            request.session['materias_disponiveis'] = materias_list
+                            request.session['awaiting_materia_selection'] = True
+                            request.session.modified = True
+                            
+                            # Resposta com as matérias disponíveis para o aluno escolher
+                            res = f"Por favor, informe a matéria. Suas matérias disponíveis são: {materias_str}."
+                        else:
+                            res = "Não encontrei matérias para a sua turma. Por favor, entre em contato com o suporte."
+
+                        return JsonResponse({"response": res})
+
                     return JsonResponse({"response": res})
             
             return JsonResponse({"error": "Mensagem não encontrada"}, status=400)
