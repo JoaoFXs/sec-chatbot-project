@@ -74,6 +74,11 @@ def get_response(intents_list, intents_json):
             return random.choice(i['responses'])
     return "Desculpe, não entendi o que você disse."
 
+def suggest_professors(name_part):
+    """Sugere nomes de professores que contenham a parte do nome fornecida."""
+    professors = Professor.objects.filter(nome__icontains=name_part).values_list('nome', flat=True)
+    return list(professors)
+
 @csrf_exempt
 def chat(request):
     try:
@@ -90,6 +95,7 @@ def chat(request):
                 # Verifica se o chatbot está aguardando o nome de um professor
                 if request.session.get('awaiting_professor_name'):
                     professor_name = message.strip().title()
+                    cont = 0
                     try:
                         professor = Professor.objects.get(nome=professor_name)
                         cursos = ', '.join([curso.nome_curso for curso in professor.cursos.all()])
@@ -105,11 +111,20 @@ def chat(request):
                             f" - Email para contato:  {professor.email}"                            
                         )
                     except Professor.DoesNotExist:
-                        res = "Professor não encontrado. Por favor, verifique o nome e tente novamente."
-                    
-                    # Reinicia o estado da sessão
-                    del request.session['awaiting_professor_name']
-                    request.session.modified = True
+                        # Sugere professores com nomes semelhantes
+                        suggestions = suggest_professors(message.strip().lower())
+                        if suggestions:
+                            request.session['awaiting_professor_name'] = True
+                            request.session.modified = True
+                            cont = 1
+                            res = f"Não encontrei o professor exato, mas encontrei os seguintes nomes semelhantes: {', '.join(suggestions)}."                          
+                        else:
+                            res = "Professor não encontrado. Por favor, verifique o nome e tente novamente."
+                            cont = 0
+                    # Reinicia o estado da sessão caso cont for igual a 0
+                    if(cont == 0):
+                        del request.session['awaiting_professor_name']
+                        request.session.modified = True
                     
                     return JsonResponse({"response": res})
                 # Verifica se o chatbot está aguardando a matéria
