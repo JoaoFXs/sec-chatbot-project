@@ -37,6 +37,12 @@
     "context": ["professores"]
   },
   {
+    "tag": "horario_aula",
+    "patterns": ["Qual o horário da aula?", "Quero saber o horário de uma aula", "Quando é a aula de [matéria]?", "Horário de aula", "Quando é a aula de [matéria] na turma [turma]?", "Qual o horário da aula de [matéria]?"],
+    "responses": ["Por favor, informe a matéria e a turma para que eu possa buscar o horário da aula."],
+    "context": ["horario_aula"]
+  },
+  {
     "tag": "anything_else",
     "patterns": [""],
     "responses": ["Desculpa, nao entendi o que voce falou, tente novamente!"],
