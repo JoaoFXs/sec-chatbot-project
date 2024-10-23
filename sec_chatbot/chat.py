@@ -127,6 +127,47 @@ def chat(request):
                         request.session.modified = True
                     
                     return JsonResponse({"response": res})
+               # Verifica se o chatbot está aguardando a matéria para as notas
+                elif request.session.get('awaiting_materia_nota'):
+                    materia_name = message.strip().title()
+                    request.session['materia_nota'] = materia_name
+                    request.session['awaiting_materia_nota'] = False  # Limpa a variável
+                    request.session['awaiting_nota_detail'] = True
+                    request.session.modified = True
+                    return JsonResponse({"response": "Você gostaria de saber a nota do Trabalho 1, Trabalho 2, Prova ou Média?"})
+                
+                # Verifica se o chatbot está aguardando o detalhe da nota (trabalho, prova ou média)
+                elif request.session.get('awaiting_nota_detail'):
+                    nota_detail = message.strip().lower()
+                    materia_name = request.session.get('materia_nota')
+
+                    # Valida o detalhe solicitado
+                    if nota_detail in ['trabalho 1', 'trabalho 2', 'prova', 'média']:
+                        try:
+                            # Buscar a nota do aluno para a matéria e o detalhe específico
+                            materia = Materia.objects.get(nome_materia=materia_name, turmas=aluno.turma)
+                            if nota_detail == 'trabalho 1':
+                                nota = materia.nota_set.get(aluno=aluno).trabalho_um
+                            elif nota_detail == 'trabalho 2':
+                                nota = materia.nota_set.get(aluno=aluno).trabalho_dois
+                            elif nota_detail == 'prova':
+                                nota = materia.nota_set.get(aluno=aluno).prova
+                            elif nota_detail == 'média':
+                                nota = materia.nota_set.get(aluno=aluno).media
+                            res = f"Sua nota de {nota_detail} em {materia_name} é {nota}."
+                        except (Materia.DoesNotExist, AttributeError):
+                            res = "Não encontrei essa matéria ou as notas não estão disponíveis no momento."
+                            
+                        # Limpa o estado da sessão após a consulta
+                        del request.session['awaiting_materia_nota']
+                        del request.session['awaiting_nota_detail']
+                        request.session.modified = True
+
+                    else:
+                        res = "Por favor, selecione entre Trabalho 1, Trabalho 2, Prova ou Média."
+
+                 
+                    return JsonResponse({"response": res})
                 # Verifica se o chatbot está aguardando a matéria
                 elif request.session.get('awaiting_materia'):
                     materia_name = message.strip().title()
@@ -166,6 +207,7 @@ def chat(request):
                 else:
                     # Processamento normal da mensagem
                     ints = predict_class(message, model)
+                    print(ints)
                     res = get_response(ints, intents)
                     if "{{ aluno.ra }}" in res and aluno:
                         res = res.replace("{{ aluno.ra }}", aluno.ra)
@@ -178,6 +220,13 @@ def chat(request):
                         # Resposta para solicitar o nome do professor
                         res = "Por favor, informe o nome do professor que deseja obter informações."
 
+                    # Verifica se a intent é 'nota_aluno'
+                    if ints and ints[0]['intent'] == 'nota_aluno':
+                        # Define o estado para aguardar o nome da matéria
+                        request.session['awaiting_materia_nota'] = True
+                        request.session.modified = True
+                        res = "Por favor, informe a matéria que deseja consultar as notas."
+                    
                     # Verifica se a intent é 'horario_aula'
                     if ints and ints[0]['intent'] == 'horario_aula':
                         # Obtém todas as matérias associadas à turma do aluno

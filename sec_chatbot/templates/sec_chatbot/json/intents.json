@@ -43,6 +43,12 @@
     "context": ["horario_aula"]
   },
   {
+    "tag": "nota_aluno",
+    "patterns": ["Quero saber minha nota em uma materia?", "Quero saber minha nota em determinada materia", "Quanto eu tirei em [matéria]?", "notas da materia", "Qual minha média em [matéria]?", "Qual o horário da aula de [matéria]?", "quanto eu tirei na prova de [matéria]", "quanto eu tirei no trabalho de [matéria]", "quanto eu tirei no trabalho de [matéria]"],
+    "responses": ["Por favor, informe a matéria que você quer saber suas notas"],
+    "context": ["nota_aluno"]
+  },
+  {
     "tag": "anything_else",
     "patterns": [""],
     "responses": ["Desculpa, nao entendi o que voce falou, tente novamente!"],
